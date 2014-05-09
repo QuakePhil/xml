@@ -8,7 +8,6 @@ $xml = array();
 
 $inside_tag = 0;
 $data = '';
-$tags = array();
 $tagstack = array();
 
 $tag_counter = 0;
@@ -17,9 +16,7 @@ function &get_ptr(&$xml, &$tagstack)
 	{
 	$ptr = &$xml;
 	if ($tagstack) foreach ($tagstack as $tag_id)
-		{
 		$ptr = &$ptr[$tag_id];
-		}
 	return $ptr;
 	}
 
