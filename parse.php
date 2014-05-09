@@ -23,8 +23,6 @@ function &get_ptr(&$xml, &$tagstack)
 while ($line = fgets($h))
 	{
 	$line = trim($line);
-	print $line;
-	print "\n";
 
 	for ($i = 0; $i < strlen($line); ++$i)
 		{
@@ -85,7 +83,6 @@ while ($line = fgets($h))
 
 fclose($h);
 
-echo "===\n";
 print_r($xml);
 
 ?>
