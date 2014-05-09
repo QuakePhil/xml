@@ -3,9 +3,9 @@ use Data::Dumper;
 use strict;
 use warnings;
 
-sub trim($)
+sub trim
 	{
-	my $s = shift || '';
+	my $s = shift;
 	$s =~ s/^\s+//;
 	$s =~ s/\s+$//;
 	return $s;
@@ -22,6 +22,9 @@ my @tagstack = ();
 
 my $tag_counter = 0;
 
+
+# another idea is to use reduce:
+# use List::Util qw(reduce); sub get_ptr { reduce { $a->{$b} ||= {}} $_[0], @$_[1] }
 my $ptr;
 sub get_ptr
 	{
@@ -34,8 +37,9 @@ sub get_ptr
 	return $ptr;
 	}
 
-while ( my $line = trim(<$xmldata>) )
+while (defined(my $line = readline($xmldata)))
 	{
+	$line = trim($line);
 	my @chars = split('', $line);
 
 	for my $char(@chars)
@@ -64,14 +68,14 @@ while ( my $line = trim(<$xmldata>) )
 				++$tag_counter;
 				push(@tagstack, $tag_counter);
 
-				my @tagdata = split(' ', $data, 2);
-				if (substr($tagdata[0], -1) eq '/') { $tagdata[0] = substr($tagdata[0], 0, -1); }
-				if ($tagdata[1] and $tagdata[1] eq '/') { $tagdata[1] = ''; }
+				my ($open_tag, $rest) = split(' ', $data, 2);
+				if (substr($open_tag, -1) eq '/') { $open_tag = substr($open_tag, 0, -1); }
+				if ($rest and $rest eq '/') { $rest = ''; }
 				#print "\tOpen tag: $data\n";
 
 				$ptr = get_ptr(\%xml, \@tagstack);
-				$ptr->{'tag'} = $tagdata[0];
-				$ptr->{'rest'} = $tagdata[1];
+				$ptr->{'tag'} = $open_tag;
+				$ptr->{'rest'} = $rest;
 
 				if (substr(trim($data), -1) eq '/') { pop(@tagstack); }
 				}
